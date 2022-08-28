@@ -29,7 +29,6 @@
         <li><a href="#execution">Execution</a></li>
         <li><a href="#timing">Timing</a></li>
       </ul>
-    <li><a href="#potential-next-steps">Potential next steps</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 
@@ -118,7 +117,7 @@ In order to solve this challenge a multiclass classifier trained at the timestep
 To understand the model results we will study the goodness of fit by class and the feature contributions. In the exhibit below one can appreciate that all the classes have an above 90 AUC individually with the highest going to the overrepresented classes and the model having a more difficult task at predicting those with fewer observations. 
 
 <p align="center">
-  <img alt="Logo" src="images/class_performances.JPG" width="70" height="150">
+  <img alt="Logo" src="images/class_performances.JPG" width="170" height="350">
 </p>
 
 We can further understand where these errors are being made by looking at the multiclass confusion matrix portrayed below:
@@ -174,21 +173,19 @@ DeviceOperatingClassifier
 <!-- USAGE -->
 ## Usage
 
-XXX
-
 ### Prerequisites
 
-XXX
+The prerequisites to execute the codebase and replicate the results described above consist of infrastructure requisites (python 3.9.6 version installed and a NVIDIA Tesla K80 GPU), together with package requisites which are detailed in *requirements.txt* and consist of tested and open-sourced well-known python packages. 
 
 ### Execution
 
-To train 
+To train the models, execute the following indicating where train.csv is stored together with the filename prefix desired for the KNN models and CatBoost objects:
 
 ```python 
 $ python -W ignore train.py <training_filename> <model_filename>
 ```
 
-To test
+Once the model artifacts are stored, execute the line below through command line to retrieve the test predictions:
 
 ```python 
 $  python -W ignore test.py <testing_filename> <solution_filename> <model_filename>
@@ -201,8 +198,6 @@ Testing the timing execution of the entire pipeline we observe the following KPI
 - Training: ~3.5h of data processing to create the master table + ~2h of model training on a GPU
 - Testing: Average of 0.85s/window of 26 instances in local machine with single CPU and 0.77s/window on a p3.8xlarge EC2 AWS instance
 
-<!-- POTENTIAL NEXT STEPS -->
-## Potential next steps
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
