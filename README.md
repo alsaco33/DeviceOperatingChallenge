@@ -1,7 +1,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <img alt="Logo" src="images/frontpage.png" width="800" height="360">
+  <img alt="Logo" src="images/frontpage.png" width="700" height="300">
   <h3 align="center"> Device Operating Region Classification Match </h3>
 
   <p align="center">
@@ -18,9 +18,9 @@
   <ol>
     <li> <a href="#context-of-the-challenge">Context of the challenge</a> </li>
     <li><a href="#data-overview">Data overview</a></li>
-    <li><a href="#classes">Multiclass label analysis</a></li>
-    <li><a href="#approach">Solution approach</a></li>
-    <li><a href="#results">Results obtained</a></li>
+    <li><a href="#multiclass-label-analysis">Multiclass label analysis</a></li>
+    <li><a href="#solution-approach">Solution approach</a></li>
+    <li><a href="#results-obtained">Results obtained</a></li>
     <li><a href="#live-time-runtime">Live-time runtime</a></li>
     <li><a href="#repository-structure">Repository structure</a></li>
     <li><a href="#usage">Usage</a></li>
@@ -57,34 +57,47 @@ This challenge is specially interesting for the following reasons which will be 
 
 As mentioned above, the raw data provided in this challenge consists of 6 time series (XYZ axis for gyroscope and accelerometer recordings respectively) together with a label indicating in which class the device is at each timestep. The head of the raw data can be observed below:
 
-<img alt="Logo" src="images/raw_data.JPG" width="800" height="360">
+<p align="center">
+  <img alt="Logo" src="images/raw_data.JPG" width="550" height="150">
+</p>
+
 
 It is interesting to note the normalization process required to make sense of the above data and feed it to a machine learning model. Gyro data, for instance, represents changes in rotation in degrees/second only after normalizing by a factor of 26 and 4.48, to retrieve the position we need to take the cumulative sum from the beginning of the session and even then we will need to account for modularity since 359 degrees in axis Y is very close to 1 degree in axis Y. 
 
 A sample session with its acceleration time series and classes is plotted below, as one can note, there is a temporal dependency of the classses within a session and changes in class are seldom within sessions.
 
-<img alt="Logo" src="images/time_series_example.JPG" width="800" height="360">
+<p align="center">
+<img alt="Logo" src="images/time_series_example.JPG" width="450" height="290">
+</p>
 
-<!-- CLASSES -->
+<!-- MULTICLASS LABEL ANALYSIS -->
 ## Multiclass label analysis
 
 <div align="justify">
 
 There are 20 classes indexed from 0 to 19 with the following base counts in the training data:
 
-<img alt="Logo" src="images/class_distribution.JPG" width="800" height="360">
+<p align="center">
+<img alt="Logo" src="images/class_distribution.JPG" width="500" height="290">
+</p>
 
 As anticipated in the previous subsection, there is a significant time-dependency of the classes. In the table below we observe the relation between the decile of the timestamp and the class counts suggesting that some classes only appear at certain timesteps within a given session, e.g. class 0:
 
-<img alt="Logo" src="images/deciltimestep_classses.JPG" width="800" height="360">
+<p align="center">
+<img alt="Logo" src="images/deciltimestep_classses.JPG" width="800" height="280">
+</p>
 
 The changes from one class to another within a given session (or independent time series) are seldom in the sense that the time series mostly stays in the same class. The transition matrix from one class to another from the train set can be observed below:
 
-<img alt="Logo" src="images/class_changes.JPG" width="800" height="360">
+<p align="center">
+<img alt="Logo" src="images/class_changes.JPG" width="700" height="360">
+</p>
 
 An additional analysis that helps contextualize the nature of our target variable is the unique classes within a particular session. Below each row represents the sorted unique classes that appear in each session or independent time series in which our device is being recorded:
 
-<img alt="Logo" src="images/session_class_changes.JPG" width="800" height="360">
+<p align="center">
+<img alt="Logo" src="images/session_class_changes.JPG" width="400" height="400">
+</p>
 
 This suggests that it might be valuable to model the classes as a series of events, i.e. finding relations between the class changes on top of the relations between the explanatory variables (acceleration and gyro) and the current class.
 
@@ -175,7 +188,7 @@ XXX
 task_type='GPU'
 ``` 
 
-And in order to run the submission *main.py* script in DrivenData's [runtime environment](https://github.com/drivendataorg/nasa-airport-config-runtime) with a predefined *prediction_time* as it was done in the evaluation phase of the competition:
+XXX
 
 ```python 
 main(prediction_time)
