@@ -1,1 +1,1 @@
-python src/test.py $1 $2 model/catboost_model
+python src/test.py $1 $2 model/model_name

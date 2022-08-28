@@ -641,7 +641,7 @@ def train_catboost(X, fold, save_path):
     # Define the model
     model = CatBoostClassifier(eta=params[fold]['learning_rate'],
                                n_estimators=10000,
-                               task_type='GPU',
+                               task_type='CPU',
                                thread_count=-1,
                                depth=params[fold]['max_depth'],
                                l2_leaf_reg=params[fold]['lambda_l2'],

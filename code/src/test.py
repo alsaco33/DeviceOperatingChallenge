@@ -63,7 +63,7 @@ def main():
         
     # 3. Extract features and compute model predictions window by window
     sessions = testdf["session_id"].unique()
-    lookback = 600
+    lookback = 300
     predictions = pd.DataFrame()
 
     for session in sessions:
@@ -96,11 +96,11 @@ def main():
                             currentfeatures[nn_var_groups[i]])[:,0]
                         
             # Compute predictions for the current window
-            currentpredictions = pd.DataFrame(models[0].predict_proba(currentfeatures[models[0].feature_names_]),
-                                              columns = [f'class_{i}' for i in range(20)]) / n_models
-            for j in range(1, n_models):
-                currentpredictions += pd.DataFrame(models[j].predict_proba(currentfeatures[models[j].feature_names_]),
-                                                   columns = [f'class_{i}' for i in range(20)]) / n_models
+            currentpredictions = pd.DataFrame(models[1].predict_proba(currentfeatures[models[0].feature_names_]),
+                                              columns = [f'class_{i}' for i in range(20)])# / n_models
+#             for j in range(1, n_models):
+#                 currentpredictions += pd.DataFrame(models[j].predict_proba(currentfeatures[models[j].feature_names_]),
+#                                                    columns = [f'class_{i}' for i in range(20)]) / n_models
             currentpredictions.insert(0, 'timestep', currentfeatures['timestep'].values)
             currentpredictions.insert(0, 'session_id', currentfeatures['session_id'].values)
             predictions = pd.concat([predictions, currentpredictions])
