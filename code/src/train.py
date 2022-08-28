@@ -5,17 +5,19 @@ import time
 import os
 import pickle
 from joblib import Parallel, delayed
-from catboost import CatBoostClassifier
 from sklearn.neighbors import KNeighborsClassifier
-from aux_functions import extract_all_features, train_catboost
+from aux_functions import *
 
-
-# Define global training variables 
-
+# Define global training variables
 nn_var_groups = [['accel_z_10_min', 'accel_z_10_ewm', 'accel_y_5_ewm', 'accel_y_5_min', 'accel_x_100_t3']]
 
 knn_targets = [[i for i in range(20)],
                [9,10],
+               [5,4],
+               [2,5,4],
+               [11,2,4,6],
+               [11,4],
+               [11,8],
                [11,2],
                [11,6],
                [12,7],
@@ -26,13 +28,16 @@ knn_targets = [[i for i in range(20)],
                [17,9],
                [17,10],
                [18,1],
-               [19,5]]
+               [18,13],
+               [18,13, 1],
+               [19,5],
+               [19,5,15]]
 
 def main():
     """
     
     Usage: python -W ignore train.py <training_filename> <model_filename>
-    Example: python -W ignore train.py "../data/raw/training.csv" "../models/model_name"
+    Example: python -W ignore train.py "../data/training.csv" "../model/model_name"
     """
     
     # 0. Load the parameters of the execution
@@ -98,8 +103,6 @@ def main():
     for col in masterTable.columns:
         if '_cat_' in col:
             masterTable[col] = masterTable[col].astype(int)
-        
-    masterTable.to_parquet(os.path.join(training_filename, '..', '..', 'interim', 'master_table.parquet'))
     
     # 5. Train and save the catboost multiclass meta-model for every fold
     print(time.ctime(), 'Training the catboost meta-model')
@@ -107,7 +110,7 @@ def main():
         train_sessions = [k for k in fold_map.keys() if fold_map[k]!=i]
         masterTable['train'] = 0
         masterTable.loc[masterTable['session_id'].isin(train_sessions), 'train'] = 1
-        model = train_catboost(masterTable, f'{model_filename}_{i}')
+        model = train_catboost(masterTable[['session_id', 'timestep', 'region_class', 'train']+SELECTED_VARS], i, model_filename)
         print(time.ctime(), 'Finished training the model')
 
 if __name__ == "__main__":
