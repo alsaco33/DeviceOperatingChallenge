@@ -104,31 +104,48 @@ This suggests that it might be valuable to model the classes as a series of even
 <!-- APPROACH -->
 ## Solution approach
 
-In order to solve this challenge a multiclass classifier trained at the timestep unit of analysis has been built. The process to reach the final model and data pipeline can be observed below:
+In order to solve this challenge a multiclass classifier trained at the timestep unit of analysis has been built. The process to reach the final model and data pipeline consists of 5 steps:
 
-
-Essentially, 5 steps have been followed:
-1. **Feature extraction**: 
-2. **KNN model creation**:
-3. **Parameter search for a meta-model**:
-4. **Meta-model training with 5-fold CV**:
-5. **Error analysis and model understanding**:
+1. **Feature extraction**: Created >4000 features consisting of aggreggations and lookback periods that potentially explain class changes based on past information. These features go from basic statistics (mean acceleration Z in the last 50 observations) to fancier relations such as the change of sin position derived from the cumulative sum of gyro data. From this massive set of features a selection process has been performed to retain only 250 variables
+2. **KNN model creation**: Using the most promising features (those that allow to separate the classes more clearly) we perform a 5-fold cross validation KNN feature extraction to predict the class
+3. **Parameter search for a meta-model**: After having a large feature base consisting of past aggreggations and KNN features we execute a 5-fold parameter search to find the best parameters for a CatBoost multiclass classifier
+4. **Meta-model training with 5-fold CV**: Having at hand the best performing set of parameters a meta-model is trained splitting in 5 folds by session all the training data points - the final test predictions will be the average of the model predictions of each fold model
+5. **Error analysis and model understanding**: Finally, the model is understood through a process of error and feature analysis 
 
 <!-- RESULTS -->
 ## Results obtained
 
-XXX
+To understand the model results we will study the goodness of fit by class and the feature contributions. In
+
+<p align="center">
+  <img alt="Logo" src="images/class_performance.JPG" width="550" height="150">
+</p>
+
+
+We can further understand where these errors are being made by looking at the multiclass confusion matrix portrayed below:
+
+<p align="center">
+  <img alt="Logo" src="images/conf_matrix.JPG" width="550" height="150">
+</p>
+
+As we can see comparing our hard predictions with the ground truths, there are some classes that the model finds particularly difficult to distinguish such as XXX and XXX. And as we can observe below, the features the model leverages the most are the following (expressed as share over 1 of the total feature contribution for each fold):
+
+<p align="center">
+  <img alt="Logo" src="images/feat_imps.JPG" width="550" height="150">
+</p>
+
+Meaning that XXX and XXX
 
 <!-- LIVE-TIME RUNTIME -->
 ## Live-time runtime
 
-Abstracting ourselves from the model details displayed above, the goal of the solution is to have a containerized solution that can serve the functionality portrayed in the capture below:
+Abstracting ourselves from the model details discussed above, the goal of the solution is to have a containerized solution that can serve predictions in real-time. The process is detailed below:
 
-XXXX
 
-That is, provide 
+1. Device collects data
+2. Data is stored as in the test.csv format, i.e. 
+3. 
 
-To that end, 
 
 <!-- REPOSITORY -->
 ## Repository structure
@@ -165,36 +182,24 @@ XXX
 
 ### Execution
 
-XXXX
+To train 
 
 ```python 
-$ python3 main.py data_path models_path build_master
+$ python -W ignore train.py <training_filename> <model_filename>
 ```
 
-XXX
+To test
 
 ```python 
-$ python3 main.py "C:/Users/.../data_folder/" "C:/Users/.../models_folder/" True
-```
-  
-Executing the above will trigger the following sequence of 10 steps automatically:
-  1. XXX
-  2. XXX
-  3. XXX
-
-XXX
-
-```python 
-task_type='GPU'
-``` 
-
-XXX
-
-```python 
-main(prediction_time)
+$  python -W ignore test.py <testing_filename> <solution_filename> <model_filename>
 ```
 
 ### Timing
+
+Testing the timing execution of the entire pipeline we observe the following KPIs which fall below the acceptance criteria specified by the competition:
+
+- Training: ~3.5h of data processing to create the master table + ~2h of model training on a GPU
+- Testing: Average of 0.85s/window of 26 instances in local machine with single CPU and 0.77s/window on a p3.8xlarge EC2 AWS instance
 
 <!-- POTENTIAL NEXT STEPS -->
 ## Potential next steps
