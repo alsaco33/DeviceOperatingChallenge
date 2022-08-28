@@ -106,35 +106,34 @@ This suggests that it might be valuable to model the classes as a series of even
 
 In order to solve this challenge a multiclass classifier trained at the timestep unit of analysis has been built. The process to reach the final model and data pipeline consists of 5 steps:
 
-1. **Feature extraction**: Created >4000 features consisting of aggreggations and lookback periods that potentially explain class changes based on past information. These features go from basic statistics (mean acceleration Z in the last 50 observations) to fancier relations such as the change of sin position derived from the cumulative sum of gyro data. From this massive set of features a selection process has been performed to retain only 250 variables
+1. **Feature extraction**: Created >4000 features consisting of aggregations and lookback periods that potentially explain class changes based on past information. These features go from basic statistics (mean acceleration Z in the last 50 observations) to fancier relations such as the change of sin position derived from the cumulative sum of gyro data. From this massive set of features a selection process has been performed to retain only 250 variables
 2. **KNN model creation**: Using the most promising features (those that allow to separate the classes more clearly) we perform a 5-fold cross validation KNN feature extraction to predict the class
-3. **Parameter search for a meta-model**: After having a large feature base consisting of past aggreggations and KNN features we execute a 5-fold parameter search to find the best parameters for a CatBoost multiclass classifier
+3. **Parameter search for a meta-model**: After having a large feature base consisting of past aggregations and KNN features we execute a 5-fold parameter search to find the best parameters for a CatBoost multiclass classifier
 4. **Meta-model training with 5-fold CV**: Having at hand the best performing set of parameters a meta-model is trained splitting in 5 folds by session all the training data points - the final test predictions will be the average of the model predictions of each fold model
 5. **Error analysis and model understanding**: Finally, the model is understood through a process of error and feature analysis 
 
 <!-- RESULTS -->
 ## Results obtained
 
-To understand the model results we will study the goodness of fit by class and the feature contributions. In
+To understand the model results we will study the goodness of fit by class and the feature contributions. In the exhibit below one can appreciate that all the classes have an above 90 AUC individually with the highest going to the overrepresented classes and the model having a more difficult task at predicting those with fewer observations. 
 
 <p align="center">
-  <img alt="Logo" src="images/class_performance.JPG" width="550" height="150">
+  <img alt="Logo" src="images/class_performances.JPG" width="70" height="150">
 </p>
-
 
 We can further understand where these errors are being made by looking at the multiclass confusion matrix portrayed below:
 
 <p align="center">
-  <img alt="Logo" src="images/conf_matrix.JPG" width="550" height="150">
+  <img alt="Logo" src="images/conf_matrix.JPG" width="850" height="550">
 </p>
 
-As we can see comparing our hard predictions with the ground truths, there are some classes that the model finds particularly difficult to distinguish such as XXX and XXX. And as we can observe below, the features the model leverages the most are the following (expressed as share over 1 of the total feature contribution for each fold):
+As we can see comparing our hard predictions with the ground truths, there are some classes that the model finds particularly difficult to distinguish such as classes 5 and 19 or 11 and 2. And as we can observe below, the features the model leverages the most are the following (expressed as share over 1 of the total feature contribution for each fold):
 
 <p align="center">
-  <img alt="Logo" src="images/feat_imps.JPG" width="550" height="150">
+  <img alt="Logo" src="images/feat_imps.JPG" width="550" height="450">
 </p>
 
-Meaning that XXX and XXX
+Meaning that the feature the model relies on most are the time within the session and some short time aggregations of the accel_z together with the KNN features engineered earlier. 
 
 <!-- LIVE-TIME RUNTIME -->
 ## Live-time runtime
@@ -143,8 +142,9 @@ Abstracting ourselves from the model details discussed above, the goal of the so
 
 
 1. Device collects data
-2. Data is stored as in the test.csv format, i.e. 
-3. 
+2. Data is stored as in the test.csv format, i.e. session_id | timestep | accelXYZ | gyroXYZ
+3. *test.py* script is executed on top of all the available data up until that point for the given session
+4. Within test.py, only the last 300 instances of the session are analyzed to save time and the prediction is retrieved
 
 
 <!-- REPOSITORY -->
